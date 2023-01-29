@@ -35,8 +35,9 @@ namespace Audio_Signal_Processing_1
         public BufferedWaveProvider bwp;
         public Int32 envelopeMax;
         public int deviceNumber;
-        public int lowCutoffFreq = 8000;
-        public int highCutoffFreq = 1000;
+        public int lowCutoffFreq;
+        public int highCutoffFreq;
+        public string file_name = @"Recordings\recorded.wav";
         public bool btn_clckd = false;
 
         private int SampleRate = 44100; // Sound Card Sampling Rate
@@ -106,22 +107,72 @@ namespace Audio_Signal_Processing_1
 
         }
 
-        private void sox(int frequency, int width)
+        private void sox_loop(int frequency, int width)
         {
 
             using (var sox = new Sox("C:\\Program Files (x86)\\sox-14-4-1\\sox.exe"))
             {
-                sox.Effects.Add(new VolumeEffect(10, GainType.Db));
-                sox.Effects.Add(new LowPassFilterEffect(lowCutoffFreq));
-                sox.Effects.Add(new HighPassFilterEffect(highCutoffFreq));
-                //sox.Effects.Add(new NoiseProfileEffect("noisy.wav"));
-                //sox.Effects.Add(new NoiseReductionEffect(""));
-                sox.OnProgress += sox_OnProgress;
-                sox.Process("-d", "-d");
+                try
+                {
+                    highCutoffFreq = Int16.Parse(textBox1.Text);
+                    lowCutoffFreq = Int16.Parse(textBox2.Text);
+
+                    sox.Effects.Add(new VolumeEffect(10, GainType.Db));
+                    sox.Effects.Add(new LowPassFilterEffect(lowCutoffFreq));
+                    sox.Effects.Add(new HighPassFilterEffect(highCutoffFreq));
+                    //sox.Effects.Add(new NoiseProfileEffect("noisy.wav"));
+                    //sox.Effects.Add(new NoiseReductionEffect(""));
+                    sox.OnProgress += sox_OnProgress;
+                    sox.Process("-d", "-d");
+                }
+
+                catch
+                {
+                    MessageBox.Show("Enter Valid Cutoff Frequency", "Invalid Cutoff Frequency");
+                }
             }
 
         }
-        
+
+        private void sox_record(int frequency, int width)
+        {
+            string filename_current = "recorded.wav";
+            int count = 0;
+
+            using (var sox = new Sox("C:\\Program Files (x86)\\sox-14-4-1\\sox.exe"))
+            {
+                filename_current = file_name;
+                while (File.Exists(filename_current))
+                {
+                    count++;
+                    filename_current = Path.GetDirectoryName(file_name)
+                                     + Path.DirectorySeparatorChar
+                                     + Path.GetFileNameWithoutExtension(file_name)
+                                     + count.ToString()
+                                     + Path.GetExtension(file_name);
+                }
+
+                try
+                {
+                    highCutoffFreq = Int16.Parse(textBox1.Text);
+                    lowCutoffFreq = Int16.Parse(textBox2.Text);
+
+                    sox.Effects.Add(new VolumeEffect(10, GainType.Db));
+                    sox.Effects.Add(new LowPassFilterEffect(lowCutoffFreq));
+                    sox.Effects.Add(new HighPassFilterEffect(highCutoffFreq));
+                    //sox.Effects.Add(new NoiseProfileEffect("noisy.wav"));
+                    //sox.Effects.Add(new NoiseReductionEffect(""));
+                    sox.OnProgress += sox_OnProgress;
+                    sox.Process("-d", filename_current);
+
+                }
+
+                catch { }
+
+            }
+
+        }
+
         // FFT converting function.
         public double[] FFT(double[] data)
         {
@@ -224,15 +275,11 @@ namespace Audio_Signal_Processing_1
 
         private void button3_Click(object sender, EventArgs e)
         {
-            try
-            {
-                lowCutoffFreq = Int16.Parse(textBox1.Text);
-                highCutoffFreq = Int16.Parse(textBox2.Text);
-            }
+            Thread threadSoxLoop = new Thread(() => sox_loop(lowCutoffFreq, highCutoffFreq));
+            threadSoxLoop.Start();
 
-            catch { }
-            Thread threadSox = new Thread(() => sox(lowCutoffFreq, highCutoffFreq));
-            threadSox.Start();
+            Thread threadSoxRecord = new Thread(() => sox_record(lowCutoffFreq, highCutoffFreq));
+            threadSoxRecord.Start();
         }
 
         private void button4_Click(object sender, EventArgs e)

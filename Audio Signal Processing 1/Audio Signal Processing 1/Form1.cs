@@ -1,8 +1,4 @@
-﻿//*******************************************//
-//****** Written by Emin Emirhan Şener ******//
-//*******************************************//
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -298,7 +294,3 @@ namespace Audio_Signal_Processing_1
         }
     }
 }
-
-//*******************************************//
-//****** Written by Emin Emirhan Şener ******//
-//*******************************************//

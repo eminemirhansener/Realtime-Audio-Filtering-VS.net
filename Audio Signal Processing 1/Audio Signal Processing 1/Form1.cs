@@ -1,4 +1,8 @@
-﻿using System;
+﻿//*******************************************//
+//****** Written by Emin Emirhan Şener ******//
+//*******************************************//
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -31,9 +35,9 @@ namespace Audio_Signal_Processing_1
         public BufferedWaveProvider bwp;
         public Int32 envelopeMax;
         public int deviceNumber;
-        public int frequency = 4000;
-        public int width = 3500;
-        public bool btn_clckd;
+        public int lowCutoffFreq = 8000;
+        public int highCutoffFreq = 1000;
+        public bool btn_clckd = false;
 
         private int SampleRate = 44100; // Sound Card Sampling Rate
         private int BufferSize = (int)Math.Pow(2, 11);
@@ -107,8 +111,11 @@ namespace Audio_Signal_Processing_1
 
             using (var sox = new Sox("C:\\Program Files (x86)\\sox-14-4-1\\sox.exe"))
             {
-                sox.Effects.Add(new VolumeEffect(0, GainType.Db));
-                sox.Effects.Add(new BandPassFilterEffect(frequency, width));
+                sox.Effects.Add(new VolumeEffect(10, GainType.Db));
+                sox.Effects.Add(new LowPassFilterEffect(lowCutoffFreq));
+                sox.Effects.Add(new HighPassFilterEffect(highCutoffFreq));
+                //sox.Effects.Add(new NoiseProfileEffect("noisy.wav"));
+                //sox.Effects.Add(new NoiseReductionEffect(""));
                 sox.OnProgress += sox_OnProgress;
                 sox.Process("-d", "-d");
             }
@@ -194,16 +201,12 @@ namespace Audio_Signal_Processing_1
 
             updateAudioGraph();
 
-            Thread threadSox = new Thread(() => sox(frequency, width));
-            threadSox.Start();
-
             timer1.Enabled = true;
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
             timer1.Enabled = false;
-            btn_clckd = true;
         }
 
         void sox_OnProgress(object sender, ProgressEventArgs e)
@@ -213,5 +216,42 @@ namespace Audio_Signal_Processing_1
 
             btn_clckd = false;
         }
+
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            btn_clckd = true;
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                lowCutoffFreq = Int16.Parse(textBox1.Text);
+                highCutoffFreq = Int16.Parse(textBox2.Text);
+            }
+
+            catch { }
+            Thread threadSox = new Thread(() => sox(lowCutoffFreq, highCutoffFreq));
+            threadSox.Start();
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            btn_clckd = true;
+        }
+
+        private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            e.Handled = !char.IsNumber(e.KeyChar);
+        }
+
+        private void textBox2_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            e.Handled = !char.IsNumber(e.KeyChar);
+        }
     }
 }
+
+//*******************************************//
+//****** Written by Emin Emirhan Şener ******//
+//*******************************************//

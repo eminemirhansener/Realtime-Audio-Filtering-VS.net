@@ -41,7 +41,7 @@ This application is designed for real-time audio spectrum visualization and band
     -   Build the project and run the application.
     -   
 **Usage**
-!(media/9ea41edb454e800b3c97a041c49cd5ac.png)
+![](media/9ea41edb454e800b3c97a041c49cd5ac.png)
 
 **UI Components**
 

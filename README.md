@@ -1,4 +1,4 @@
-**Audio Signal Processing Application**
+**Realtime Audio Signal Processing**
 
 **Overview**
 
@@ -28,7 +28,7 @@ This application is designed for real-time audio spectrum visualization and band
     -   Install SoX and note the installation directory.
 3.  **Clone the Repository:**
 ```
-    git clone https://github.com/yourusername/Audio_Signal_Processing_Application.git
+    git clone https://github.com/eminemirhansener/Realtime-Audio-Filtering-VS.net.git
 ```
 4.  **Open the Project:**
     -   Open the project in Visual Studio.

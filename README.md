@@ -40,8 +40,7 @@ This application is designed for real-time audio spectrum visualization and band
 6.  **Build and Run:**
     -   Build the project and run the application.
 **Usage**
-
-![metin, ekran görüntüsü, öykü gelişim çizgisi; kumpas; grafiğini çıkarma, diyagram içeren bir resim Açıklama otomatik olarak oluşturuldu](media/9ea41edb454e800b3c97a041c49cd5ac.png)
+(media/9ea41edb454e800b3c97a041c49cd5ac.png)
 
 **UI Components**
 
